@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3787d8de-e69b-476d-9048-1be56adeab77" name="Changes" comment="Swing ui">
+    <list default="true" id="3787d8de-e69b-476d-9048-1be56adeab77" name="Changes" comment="Exception handling added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/POJO/Symbols/Symbols.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/POJO/Symbols/Symbols__1.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +42,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
   <component name="RunManager">
@@ -86,12 +88,21 @@
       <option name="project" value="LOCAL" />
       <updated>1698516593636</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="currency converter ui">
+      <created>1698594319080</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1698594319081</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
     <MESSAGE value="Swing ui" />
-    <option name="LAST_COMMIT_MESSAGE" value="Swing ui" />
+    <MESSAGE value="currency converter ui" />
+    <MESSAGE value="Exception handling added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Exception handling added" />
   </component>
 </project>

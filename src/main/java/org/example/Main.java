@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +24,6 @@ public class Main {
         // String[] currencyArr = {"AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", "BSD", "BTC", "BTN", "BWP", "BYN", "BYR", "BZD", "CAD", "CDF", "CHF", "CLF", "CLP", "CNY", "COP", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GGP", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "IMP", "INR", "IQD", "IRR", "ISK", "JEP", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SLL", "SOS", "SSP", "SRD", "STD", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VEF", "VES", "VND", "VUV", "WST", "XAF", "XAG", "XAU", "XCD", "XDR", "XOF", "XPF", "YER", "ZAR", "ZMK", "ZMW", "ZWL"};
         Map<String, Object> symbolsList = symbolsNames();
         String[] currencyArr = concatenateSymbols(symbolsList);
-
 
         JFrame f = new JFrame("Currency Converter");
         f.setVisible(true);
@@ -44,7 +45,7 @@ public class Main {
         amount.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         amount.setVisible(true);
 
-        JTextField amountField = new JTextField("                                                               ");
+        JTextField amountField = new JTextField(5);
         amountField.setBounds(200, 200, 200, 30);
         amountField.setVisible(true);
 
@@ -57,30 +58,59 @@ public class Main {
         f.add(amount);
         f.add(amountField);
 
-        JButton convertButton = new JButton("<html>Click to Convert </html>");
+        JButton convertButton = new JButton("<html>Click to convert </html>");
         convertButton.setHorizontalAlignment(SwingConstants.CENTER);
         f.add(convertButton);
 
+        JButton clearButton = new JButton("<html>Click to clear </html>");
+        clearButton.setHorizontalAlignment(SwingConstants.CENTER);
+        f.add(clearButton);
+
+        convertButton.setEnabled(false);
+
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                amountField.setText(null);
+            }
+        });
+
+        amountField.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                changed();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                changed();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                changed();
+            }
+
+            public void changed() {
+                convertButton.setEnabled(!amountField.getText().isEmpty() && !amountField.getText().isBlank() && !amountField.getText().equals("") && !amountField.getText().equals(null));
+            }
+        });
 
         convertButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                double amount = Double.parseDouble(amountField.getText());
-
-                String toCur = cb2.getSelectedItem().toString().substring(0, 3);
-                String fromCur = cb1.getSelectedItem().toString().substring(0, 3);
-
                 try {
+                    System.out.println("value of amount:  " + Double.parseDouble(amountField.getText().trim()));
+                    double amount = Double.parseDouble(amountField.getText().trim());
+                    String toCur = Objects.requireNonNull(cb2.getSelectedItem()).toString().substring(0, 3);
+                    String fromCur = Objects.requireNonNull(cb1.getSelectedItem()).toString().substring(0, 3);
                     double conversionRate = getConversionRate(toCur, fromCur);
                     final DecimalFormat decfor = new DecimalFormat("0.00");
 
                     JOptionPane.showMessageDialog(null, "answer : " + decfor.format(conversionRate * amount));
-                } catch (JsonProcessingException ex) {
+                } catch (NumberFormatException | JsonProcessingException ex) {
+                    JOptionPane.showMessageDialog(null, "Kindly check your input and retry again");
                     throw new RuntimeException(ex);
                 }
             }
         });
-
     }
 
     private static double getConversionRate(String toCur, String fromCur) throws JsonProcessingException {
@@ -98,19 +128,11 @@ public class Main {
         }
         ObjectMapper mapper = new ObjectMapper();
 // convert JSON string to Map
+        assert response != null;
         JsonNode jsonNode = mapper.readTree(response.body()).get("rates");
-
-        System.out.println("jsonNode" + jsonNode);
-
-        Map<String, Double> map = mapper.convertValue(jsonNode, Map.class);
-
-        if (Objects.equals(fromCur, "EUR") || Objects.equals(toCur, "EUR")) {
-            Double toCurd = Double.valueOf(map.get(toCur).toString());
-            Double fromCurD = Double.valueOf(map.get(fromCur).toString());
-            rate = toCurd / fromCurD;
-        } else {
-            rate = map.get(toCur) / map.get(fromCur);
-        }
+        System.out.println("Conversion rates: " + jsonNode);
+        Map<Object, Object> map = mapper.convertValue(jsonNode, Map.class);
+        rate = Double.parseDouble(String.valueOf(map.get(toCur))) / Double.parseDouble(String.valueOf(map.get(fromCur)));
         return rate;
     }
 
@@ -131,11 +153,8 @@ public class Main {
         ObjectMapper mapper = new ObjectMapper();
 // convert JSON string to Map
         JsonNode jsonNode = mapper.readTree(getSymbols()).get("symbols");
-
-        System.out.println("jsonNode" + jsonNode);
-
+        System.out.println("Symbols : " + jsonNode);
         Map<String, Object> map = mapper.convertValue(jsonNode, Map.class);
-
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
