@@ -19,8 +19,15 @@ import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Objects;
 
-public class Main {
-    public static void main(String[] args) throws JsonProcessingException {
+import static java.lang.System.getProperties;
+import static org.example.ReadConfigMain.getPropertiesConfig;
+
+/**
+ * @author SonaliSihra
+ */
+public class Main extends ReadConfigMain {
+    public static void main(String[] args) throws IOException {
+        properties.getPropValues();
         // String[] currencyArr = {"AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", "BSD", "BTC", "BTN", "BWP", "BYN", "BYR", "BZD", "CAD", "CDF", "CHF", "CLF", "CLP", "CNY", "COP", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GGP", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "IMP", "INR", "IQD", "IRR", "ISK", "JEP", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SLL", "SOS", "SSP", "SRD", "STD", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VEF", "VES", "VND", "VUV", "WST", "XAF", "XAG", "XAU", "XCD", "XDR", "XOF", "XPF", "YER", "ZAR", "ZMK", "ZMW", "ZWL"};
         Map<String, Object> symbolsList = symbolsNames();
         String[] currencyArr = concatenateSymbols(symbolsList);
@@ -67,7 +74,6 @@ public class Main {
         f.add(clearButton);
 
         convertButton.setEnabled(false);
-
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,12 +123,15 @@ public class Main {
 
         double rate;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://data.fixer.io/api/latest?access_key=c8cfd0d4f8d76a1c20e8b8596850cdbf&symbols=" + fromCur + "," + toCur))
+                .uri(URI.create("http://data.fixer.io/api/latest?access_key=" + properties.accessKey + "&symbols=" + fromCur + "," + toCur))
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = null;
         try {
             response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.body().substring(15, 20).equals("false")) {
+                System.out.println(response.body().substring(99, 188));
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -163,12 +172,15 @@ public class Main {
 
     public static String getSymbols() {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://data.fixer.io/api/symbols?access_key=c8cfd0d4f8d76a1c20e8b8596850cdbf"))
+                .uri(URI.create("http://data.fixer.io/api/symbols?access_key=" + properties.accessKey))
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = null;
         try {
             response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.body().substring(15, 20).equals("false")) {
+                System.out.println(response.body().substring(99, 188));
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
