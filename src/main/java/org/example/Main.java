@@ -21,7 +21,6 @@ import java.util.Objects;
 
 import static java.lang.System.getProperties;
 import static org.example.ReadConfigMain.getPropertiesConfig;
-
 /**
  * @author SonaliSihra
  */
